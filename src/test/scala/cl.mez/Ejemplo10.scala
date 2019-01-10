@@ -2,27 +2,28 @@ package cl.mez
 
 import org.scalatest._
 
-object Ejemplo10 {
-  type Id[T] = T
-  implicit class IdOps[T](val it: Id[T]) extends AnyVal {
-    def flatMap[U](f: T => Id[U]): Id[U] = f(it)
-    def map    [U](f: T => U    ): Id[U] = f(it)
-  }
-}
-
 class Ejemplo10 extends FunSuite with Matchers {
-  import Ejemplo10._
 
-  def num(lc: Int, ld: Int, lu: Int): Int =
+  def isVowel(c: Char): Boolean = "aeiou".contains(c.toLower)
+
+  val prices: Map[Char, Int] = Map('a' → 1000, 'c' → 2000, 'e' → 3000, 'z' → 4000)
+
+  val input: Option[String] = Some("hello world")
+
+  val result: Option[Int] =
     for {
-      c <- lc
-      d <- ld
-      u <- lu
-    }
-    yield 100 * c + 10 * d + u
+      msg: String ← input
+      vowel: Char ← msg.find(isVowel)
+      price: Int  ← prices.get(vowel)
+    } yield price
 
-  test("num, for-comprehension with Id") {
-    num(6, 1, 9) shouldBe 619
+  val action: String = result match {
+    case Some(p) ⇒ s"The price is $p."
+    case None    ⇒ s"No price."
+  }
+
+  test("for comprehension with different types") {
+    action shouldBe "The price is 3000."
   }
 
 }
