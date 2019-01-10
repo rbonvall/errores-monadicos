@@ -19,13 +19,15 @@ class Ejemplo09 extends FunSuite with Matchers {
     def one  = Try { 1 }
     def nine = Try { 3 * 3 }
     def fail = Try { 1 / 0 }
-    def boom = Try { null.asInstanceOf[String].toInt }
+    def boom = Try { null.asInstanceOf[String].length() }
 
     num(six, one, nine) shouldBe Success(619)
 
     num(six, one, boom) shouldBe a [Failure[_]]
-    num(six, one, boom)
+    num(six, one, boom).failed.get shouldBe a [NullPointerException]
 
+    num(six, fail, boom) shouldBe a [Failure[_]]
+    num(six, fail, boom).failed.get shouldBe a [ArithmeticException]
   }
 
 }
